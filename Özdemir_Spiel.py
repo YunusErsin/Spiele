@@ -13,23 +13,18 @@ class Farben:
     ROT = (255, 0, 0)
     Schwarz = (0, 0, 0)
     WEIß = (255,255,255)
-
-
-
-
-Text = pygame.font.SysFont("Arial", 50) # schriftart und größe
-
+ 
+Text = pygame.font.SysFont("Arial", 50)   
 
 class Schlaeger:
-    
     Schlaeger_breite  = 10
     Schlaeger_hoehe = 100
     Farbe_schlaeger = Farben.ROT
     geschwindigkeit_schlaeger = 8
 
     def __init__(self, x, y, width, height):
-        self.x = self.original_x = x
-        self.y = self.original_y = y
+        self.x = x
+        self.y = y
         self.width = width
         self.height = height
     
@@ -44,8 +39,8 @@ class Schlaeger:
 
 class Ball:
     
-    BALL_RADIUS = 7
-    geschwindigkeit_ball = 5
+    BALL_RADIUS = 5
+    geschwindigkeit_ball = 10
     Farbe_ball = Farben.WEIß
 
     def __init__(self, x, y, radius):
@@ -68,12 +63,13 @@ class Ball:
         self.y_geschwindigkeit = 0
         self.x_geschwindigkeit *= -1
 
+
 def draw(window, linker_schläger, rechter_schläger, ball, punkte_links, punkte_rechts):
     window.fill(Farben.Schwarz)
 
     punktestand_links = Text.render(f"{punkte_links}", 1, Farben.ROT)   
     punktestand_rechts = Text.render(f"{punkte_rechts}", 1, Farben.ROT)
-    window.blit(punktestand_links, (Settings.Breite//4 - punktestand_links.get_width()//2, 20)) # position
+    window.blit(punktestand_links, (Settings.Breite//4 - punktestand_links.get_width()//2, 20))  # position
     window.blit(punktestand_rechts, (Settings.Breite * (3/4) - punktestand_rechts.get_width()//2, 20))
     
     linker_schläger.draw(window)
@@ -81,23 +77,24 @@ def draw(window, linker_schläger, rechter_schläger, ball, punkte_links, punkte
     ball.draw(window)
     pygame.display.update()
 
+
+
+
 def collision(ball, linker_schläger, rechter_schläger):
     if ball.y - ball.radius <= 0 or ball.y + ball.radius >= Settings.Hoehe: # radius damit die kanten vom ball erkannt werden, *= -1 ist richtung veränderung, fur oben und unten rand
-        ball.y_geschwindigkeit *= -1
+        ball.y_geschwindigkeit *= -1 #ändert richtung
 
     if ball.x_geschwindigkeit < 0: # ball bewegt sich nach links, also wird die collision mit den linke schläger geprüft
         if ball.y + ball.radius >= linker_schläger.y and ball.y - ball.radius <= linker_schläger.y + linker_schläger.height:
-            if ball.x - ball.radius <= linker_schläger.x + linker_schläger.width: # x ist die linke kante vom linken schläger, + die breite vom linken schläger, - radius weil man nach links geht
-                ball.x_geschwindigkeit *= -1 # ändert richtung
+            if ball.x - ball.radius <= linker_schläger.x + linker_schläger.width:  # x ist die linke kante vom linken schläger, + die breite vom linken schläger, - radius weil man nach links geh
+                ball.x_geschwindigkeit *= -1 #ändert richtung
                 ball.y_geschwindigkeit = (ball.y - (linker_schläger.y + linker_schläger.height / 2)) / (linker_schläger.height / 2) * ball.geschwindigkeit_ball  # der ball prallt in verschiedenen richtungen ab
      
-    else: # ball bewegt sich nach rechts, kollision mit rechten schläger wird geprüft
+    else:  # ball bewegt sich nach rechts, kollision mit rechten schläger wird geprüft
         if ball.y + ball.radius >= rechter_schläger.y and ball.y - ball.radius <= rechter_schläger.y + rechter_schläger.height:
             if ball.x + ball.radius >= rechter_schläger.x: # x ist die linke kante vom rechtn schläger, + radius weil man nacht rechts geht
-                ball.x_geschwindigkeit *= -1 # ändert richtung
-                
-                ball.y_geschwindigkeit = (ball.y - (rechter_schläger.y + rechter_schläger.height / 2)) / (rechter_schläger.height / 2) * ball.geschwindigkeit_ball  # der ball prallt in verschiedenen richtungen ab
- 
+                ball.x_geschwindigkeit *= -1 #ändert richtung
+                ball.y_geschwindigkeit = (ball.y - (rechter_schläger.y + rechter_schläger.height / 2)) / (rechter_schläger.height / 2) * ball.geschwindigkeit_ball   # der ball prallt in verschiedenen richtungen ab
 
 def schläger_bewegung(taste, linker_schläger, rechter_schläger):
     if taste[pygame.K_w]:
@@ -111,9 +108,6 @@ def schläger_bewegung(taste, linker_schläger, rechter_schläger):
         rechter_schläger.bewegung(hoch=False)
 
 # wenn die w taste gedrückt wird, wird für den linken schläger up = True gesetzt und der Schläger bewegt sich
-
-  
-
 
 def main():
     running = True
@@ -140,12 +134,6 @@ def main():
             if event.type == pygame.QUIT or taste[pygame.K_ESCAPE]:
                 running = False
 
-                
-              
-
-        ball.move()
-        collision(ball, linker_schlaeger, rechter_schlaeger)
-
         if ball.x < 0:
             punkte_rechts += 1
             ball.ball_anfang()
@@ -168,4 +156,3 @@ def main():
 
 if __name__ == "__main__":
     main()
-
